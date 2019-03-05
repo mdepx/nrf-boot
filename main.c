@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2018 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2018-2019 Ruslan Bukin <br@bsdpad.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,8 @@
 #include <arm/arm/scb.h>
 #include <arm/nordicsemi/nrf9160.h>
 
+#include <machine/cpuregs.h>
+
 struct uarte_softc uarte_sc;
 struct arm_nvic_softc nvic_sc;
 struct spu_softc spu_sc;
@@ -43,7 +45,10 @@ struct arm_scb_softc scb_sc;
 #define	UART_PIN_RX	21
 #define	UART_BAUDRATE	115200
 
+#define	APP_ENTRY	0x40000
+
 void app_main(void);
+void jump_ns(uint32_t addr);
 
 extern uint32_t _smem;
 extern uint32_t _sdata;
@@ -124,6 +129,10 @@ secure_boot_configure(void)
 void
 app_main(void)
 {
+	uint32_t control_ns;
+	uint32_t msp_ns;
+	uint32_t psp_ns;
+	uint32_t *vec;
 
 	clear_bss();
 	copy_sdata();
@@ -132,12 +141,39 @@ app_main(void)
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
 	console_register(uart_putchar, (void *)&uarte_sc);
 
+	printf("Hello world!\n");
+
 	spu_init(&spu_sc, BASE_SPU);
-	arm_scb_init(&scb_sc, BASE_SCS);
 
 	secure_boot_configure();
 
-	printf("Hello world!\n");
+	arm_scb_init(&scb_sc, BASE_SCS);
+	arm_scb_set_vector(&scb_sc, APP_ENTRY);
 
-	while (1);
+	vec = (uint32_t *)APP_ENTRY;
+
+	msp_ns = vec[0];
+	psp_ns = 0;
+
+	__asm __volatile("msr msp_ns, %0" :: "r" (msp_ns));
+	__asm __volatile("msr msp_ns, %0" :: "r" (psp_ns));
+
+	__asm __volatile("mrs %0, control_ns" : "=r" (control_ns));
+	control_ns &= ~CONTROL_SPSEL; /* Use main stack pointer. */
+	control_ns &= ~CONTROL_NPRIV; /* Set privilege mode. */
+	__asm __volatile("msr control_ns, %0" :: "r" (control_ns));
+
+	arm_scb_exceptions_prio_config(&scb_sc, 1);
+	arm_scb_exceptions_target_config(&scb_sc, 0);
+	arm_scb_sysreset_secure(&scb_sc, 0);
+	arm_sau_configure(&scb_sc, 0, 1);
+	arm_fpu_non_secure(&scb_sc, 1);
+
+	printf("Jumping to non-secure address 0x%x\n", vec[1]);
+
+	spu_periph_set_attr(&spu_sc, ID_UARTE0, 0, 0);
+
+	jump_ns(vec[1]);
+
+	/* UNREACHABLE */
 }

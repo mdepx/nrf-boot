@@ -21,6 +21,7 @@ OBJECTS =							\
 		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
 		osfive/sys/kern/kern_malloc_fl.o		\
 		osfive/sys/kern/kern_panic.o			\
+		osfive/sys/kern/kern_timeout.o			\
 		osfive/sys/kern/subr_console.o			\
 		osfive/sys/kern/subr_prf.o			\
 		start.o
