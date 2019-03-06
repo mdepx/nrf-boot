@@ -8,6 +8,7 @@ OBJCOPY =	${CROSS_COMPILE}objcopy
 LDSCRIPT =	${CURDIR}/ldscript
 
 OBJECTS =							\
+		errata.o					\
 		main.o						\
 		osfive/sys/arm/arm/machdep.o			\
 		osfive/sys/arm/arm/nvic.o			\
