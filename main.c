@@ -35,6 +35,8 @@
 
 #include <machine/cpuregs.h>
 
+#include "errata.h"
+
 struct uarte_softc uarte_sc;
 struct arm_nvic_softc nvic_sc;
 struct spu_softc spu_sc;
@@ -99,6 +101,7 @@ secure_boot_configure_periph(int periph_id)
 {
 
 	spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
+	arm_nvic_disable_intr(&nvic_sc, periph_id);
 	arm_nvic_target_ns(&nvic_sc, periph_id, 0);
 }
 
@@ -132,6 +135,7 @@ secure_boot_configure(void)
 	secure_boot_configure_periph(ID_FPU);
 	secure_boot_configure_periph(ID_TWIM2);
 	secure_boot_configure_periph(ID_SPIM3);
+	secure_boot_configure_periph(ID_TIMER0);
 }
 
 void
@@ -151,13 +155,17 @@ app_main(void)
 
 	printf("Hello world!\n");
 
+	power_init(&power_sc, BASE_POWER | PERIPH_SECURE_ACCESS);
+	errata_init();
+
 	spu_init(&spu_sc, BASE_SPU);
 	arm_nvic_init(&nvic_sc, BASE_SCS);
 
 	secure_boot_configure();
 
-	arm_scb_init(&scb_sc, BASE_SCS);
+	arm_scb_init(&scb_sc, BASE_SCS_NS);
 	arm_scb_set_vector(&scb_sc, APP_ENTRY);
+	arm_scb_init(&scb_sc, BASE_SCS);
 
 	vec = (uint32_t *)APP_ENTRY;
 
