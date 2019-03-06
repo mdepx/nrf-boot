@@ -95,6 +95,14 @@ copy_sdata(void)
 }
 
 static void
+secure_boot_configure_periph(int periph_id)
+{
+
+	spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
+	arm_nvic_target_ns(&nvic_sc, periph_id, 0);
+}
+
+static void
 secure_boot_configure(void)
 {
 	int i;
@@ -111,19 +119,19 @@ secure_boot_configure(void)
 
 	spu_gpio_set_perm(&spu_sc, 0, 0);
 
-	spu_periph_set_attr(&spu_sc, ID_CLOCK, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_RTC1, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_IPC, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_NVMC, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_VMC, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_GPIO, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_GPIOTE1, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_UARTE1, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_EGU1, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_EGU2, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_FPU, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_TWIM2, 0, 0);
-	spu_periph_set_attr(&spu_sc, ID_SPIM3, 0, 0);
+	secure_boot_configure_periph(ID_CLOCK);
+	secure_boot_configure_periph(ID_RTC1);
+	secure_boot_configure_periph(ID_IPC);
+	secure_boot_configure_periph(ID_NVMC);
+	secure_boot_configure_periph(ID_VMC);
+	secure_boot_configure_periph(ID_GPIO);
+	secure_boot_configure_periph(ID_GPIOTE1);
+	secure_boot_configure_periph(ID_UARTE1);
+	secure_boot_configure_periph(ID_EGU1);
+	secure_boot_configure_periph(ID_EGU2);
+	secure_boot_configure_periph(ID_FPU);
+	secure_boot_configure_periph(ID_TWIM2);
+	secure_boot_configure_periph(ID_SPIM3);
 }
 
 void
@@ -144,6 +152,7 @@ app_main(void)
 	printf("Hello world!\n");
 
 	spu_init(&spu_sc, BASE_SPU);
+	arm_nvic_init(&nvic_sc, BASE_SCS);
 
 	secure_boot_configure();
 
@@ -156,7 +165,7 @@ app_main(void)
 	psp_ns = 0;
 
 	__asm __volatile("msr msp_ns, %0" :: "r" (msp_ns));
-	__asm __volatile("msr msp_ns, %0" :: "r" (psp_ns));
+	__asm __volatile("msr psp_ns, %0" :: "r" (psp_ns));
 
 	__asm __volatile("mrs %0, control_ns" : "=r" (control_ns));
 	control_ns &= ~CONTROL_SPSEL; /* Use main stack pointer. */
@@ -171,7 +180,7 @@ app_main(void)
 
 	printf("Jumping to non-secure address 0x%x\n", vec[1]);
 
-	spu_periph_set_attr(&spu_sc, ID_UARTE0, 0, 0);
+	secure_boot_configure_periph(ID_UARTE0);
 
 	jump_ns(vec[1]);
 
