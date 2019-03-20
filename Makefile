@@ -15,7 +15,6 @@ OBJECTS =							\
 		osfive/sys/arm/nordicsemi/nrf9160_spu.o		\
 		osfive/sys/arm/nordicsemi/nrf9160_timer.o	\
 		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
-		osfive/sys/kern/subr_startup.o			\
 		start.o
 
 LIBRARIES = KERN ARM LIBC

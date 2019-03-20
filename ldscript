@@ -26,18 +26,18 @@ SECTIONS
 
 	/* Ensure _smem is associated with the next section */
 	. = .;
-	_smem = ABSOLUTE(.);
+	PROVIDE(_smem = .);
 	.data : {
-		_sdata = ABSOLUTE(.);
+		PROVIDE(_sdata = .);
 		*(.data*);
-		_edata = ABSOLUTE(.);
+		PROVIDE(_edata = .);
 	} > sram0 AT > flash
 
 	.bss : {
-		_sbss = ABSOLUTE(.);
+		PROVIDE(_sbss = .);
 		*(.bss*)
 		*(COMMON)
-		_ebss = ABSOLUTE(.);
+		PROVIDE(_ebss = .);
 	} > sram0
 
 	. = ALIGN(4);
