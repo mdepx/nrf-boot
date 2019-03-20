@@ -53,12 +53,6 @@ struct arm_scb_softc scb_sc;
 void app_main(void);
 void jump_ns(uint32_t addr);
 
-extern uint32_t _smem;
-extern uint32_t _sdata;
-extern uint32_t _edata;
-extern uint32_t _sbss;
-extern uint32_t _ebss;
-
 static void
 uart_putchar(int c, void *arg)
 {
