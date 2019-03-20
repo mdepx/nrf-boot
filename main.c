@@ -28,6 +28,7 @@
 #include <sys/console.h>
 #include <sys/systm.h>
 #include <sys/malloc.h>
+#include <sys/thread.h>
 
 #include <arm/arm/nvic.h>
 #include <arm/arm/scb.h>
@@ -69,31 +70,6 @@ uart_putchar(int c, void *arg)
 		uarte_putc(sc, '\r');
 
 	uarte_putc(sc, c);
-}
-
-static void
-clear_bss(void)
-{
-	uint8_t *sbss;
-	uint8_t *ebss;
-
-	sbss = (uint8_t *)&_sbss;
-	ebss = (uint8_t *)&_ebss;
-
-	while (sbss < ebss)
-		*sbss++ = 0;
-}
-
-static void
-copy_sdata(void)
-{
-	uint8_t *dst;
-	uint8_t *src;
-
-	/* Copy sdata to RAM if required */
-	for (src = (uint8_t *)&_smem, dst = (uint8_t *)&_sdata;
-	    dst < (uint8_t *)&_edata; )
-		*dst++ = *src++;
 }
 
 static void
@@ -146,8 +122,9 @@ app_main(void)
 	uint32_t psp_ns;
 	uint32_t *vec;
 
-	clear_bss();
-	copy_sdata();
+	zero_bss();
+	relocate_data();
+	md_init();
 
 	uarte_init(&uarte_sc, BASE_UARTE0 | PERIPH_SECURE_ACCESS,
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
