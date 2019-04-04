@@ -18,18 +18,24 @@ Connect SWD pins as follows:
 | SWDCLK            | SWCLK                |
 | Ground            | Ground               |
 
-### Build under Linux or FreeBSD
+### Under Linux
+    $ sudo apt install gcc-arm-linux-gnueabi
+    $ export CROSS_COMPILE=arm-linux-gnueabi-
+### Under FreeBSD
+    $ sudo pkg install arm-none-eabi-gcc arm-none-eabi-binutils
+    $ export CROSS_COMPILE=arm-none-eabi-
+### Build
     $ git clone --recursive https://github.com/osfive/nrf9160-boot
     $ cd nrf9160-boot
-    $ export CROSS_COMPILE=arm-none-eabi-
     $ make
 
 ### Build openocd
+    $ sudo apt install pkg-config autotools-dev automake libtool
     $ git clone https://github.com/bukinr/openocd-nrf9160
     $ cd openocd-nrf9160
     $ ./bootstrap
     $ ./configure --enable-jlink
-    $ gmake
+    $ make
 
 ### Program the chip
     $ export OPENOCD_PATH=/path/to/openocd-nrf9160
