@@ -17,7 +17,7 @@ OBJECTS =							\
 		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
 		start.o
 
-LIBRARIES = KERN ARM LIBC
+LIBRARIES = kern arm libc
 
 CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
 	-fno-builtin-printf -ffreestanding		\
