@@ -17,7 +17,8 @@ OBJECTS =							\
 		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
 		start.o
 
-LIBRARIES = kern arm libc
+KERNEL = arm kern
+LIBRARIES = libc
 
 CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
 	-fno-builtin-printf -ffreestanding		\
@@ -30,6 +31,5 @@ all:	__compile __link
 
 clean:	__clean
 
-include osfive/lib/kern/Makefile.inc
 include osfive/lib/libc/Makefile.inc
 include osfive/mk/gnu.mk
