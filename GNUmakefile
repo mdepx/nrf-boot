@@ -1,5 +1,5 @@
 APP =		nrf9160-boot
-ARCH =		arm
+MACHINE =	arm
 
 CC =		${CROSS_COMPILE}gcc
 LD =		${CROSS_COMPILE}ld
@@ -17,7 +17,7 @@ OBJECTS =							\
 		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
 		start.o
 
-KERNEL = arm kern
+KERNEL =
 LIBRARIES = libc
 
 CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
