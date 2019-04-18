@@ -27,9 +27,9 @@ CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
 	-Wpointer-arith -Winline -Wcast-qual		\
 	-Wundef -Wmissing-include-dirs -Wall -Werror
 
-all:	__compile __link
+all:	_compile _link
 
-clean:	__clean
+clean:	_clean
 
 include osfive/lib/libc/Makefile.inc
 include osfive/mk/gnu.mk
