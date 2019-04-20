@@ -31,5 +31,5 @@ all:	_compile _link
 
 clean:	_clean
 
-include osfive/lib/libc/Makefile.inc
-include osfive/mk/gnu.mk
+include osfive/mk/default.mk
+include osfive/mk/gnu-toolchain.mk
