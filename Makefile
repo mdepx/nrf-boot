@@ -10,11 +10,11 @@ LDSCRIPT =	${CURDIR}/ldscript
 OBJECTS =							\
 		errata.o					\
 		main.o						\
-		osfive/sys/arm/nordicsemi/nrf_uarte.o		\
-		osfive/sys/arm/nordicsemi/nrf9160_power.o	\
-		osfive/sys/arm/nordicsemi/nrf9160_spu.o		\
-		osfive/sys/arm/nordicsemi/nrf9160_timer.o	\
-		osfive/sys/arm/nordicsemi/nrf9160_uicr.o	\
+		${OSDIR}/sys/arm/nordicsemi/nrf_uarte.o		\
+		${OSDIR}/sys/arm/nordicsemi/nrf9160_power.o	\
+		${OSDIR}/sys/arm/nordicsemi/nrf9160_spu.o	\
+		${OSDIR}/sys/arm/nordicsemi/nrf9160_timer.o	\
+		${OSDIR}/sys/arm/nordicsemi/nrf9160_uicr.o	\
 		start.o
 
 KERNEL =
