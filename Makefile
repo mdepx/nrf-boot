@@ -7,6 +7,7 @@ OBJCOPY =	${CROSS_COMPILE}objcopy
 
 LDSCRIPT =	${CURDIR}/ldscript
 
+OBJDIR =	obj
 OBJECTS =							\
 		errata.o					\
 		main.o						\
@@ -27,9 +28,10 @@ CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
 	-Wpointer-arith -Winline -Wcast-qual		\
 	-Wundef -Wmissing-include-dirs -Wall -Werror
 
-all:	_compile _link
+all:	${OBJDIR}/${APP}.elf
 
-clean:	_clean
+clean:
+	@rm -f ${OBJECTS} ${OBJDIR}/{APP}.elf
 
+include osfive/lib/libc/Makefile.inc
 include osfive/mk/default.mk
-include osfive/mk/gnu-toolchain.mk
