@@ -108,21 +108,24 @@ secure_boot_configure(void)
 	secure_boot_configure_periph(ID_TIMER0);
 }
 
-void
-app_main(void)
+int
+app_init(void)
+{
+
+	uarte_init(&uarte_sc, BASE_UARTE0 | PERIPH_SECURE_ACCESS,
+	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
+	console_register(uart_putchar, (void *)&uarte_sc);
+
+	return (0);
+}
+
+int
+main(void)
 {
 	uint32_t control_ns;
 	uint32_t msp_ns;
 	uint32_t psp_ns;
 	uint32_t *vec;
-
-	zero_bss();
-	relocate_data();
-	md_init();
-
-	uarte_init(&uarte_sc, BASE_UARTE0 | PERIPH_SECURE_ACCESS,
-	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
-	console_register(uart_putchar, (void *)&uarte_sc);
 
 	printf("Hello world!\n");
 
@@ -164,4 +167,6 @@ app_main(void)
 	jump_ns(vec[1]);
 
 	/* UNREACHABLE */
+
+	return (0);
 }
