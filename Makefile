@@ -8,6 +8,8 @@ OBJCOPY =	${CROSS_COMPILE}objcopy
 LDSCRIPT =	${CURDIR}/ldscript
 
 OBJDIR =	obj
+OSDIR =		mdepx
+
 OBJECTS =							\
 		errata.o					\
 		main.o						\
@@ -33,5 +35,5 @@ all:	${OBJDIR}/${APP}.elf
 clean:
 	@rm -f ${OBJECTS} ${OBJDIR}/{APP}.elf
 
-include osfive/lib/libc/Makefile.inc
-include osfive/mk/default.mk
+include ${OSDIR}/lib/libc/Makefile.inc
+include ${OSDIR}/mk/default.mk
