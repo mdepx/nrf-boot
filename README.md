@@ -25,7 +25,7 @@ Connect SWD pins as follows:
     $ sudo pkg install arm-none-eabi-gcc arm-none-eabi-binutils
     $ export CROSS_COMPILE=arm-none-eabi-
 ### Build
-    $ git clone --recursive https://github.com/osfive/nrf9160-boot
+    $ git clone --recursive https://github.com/machdep/nrf9160-boot
     $ cd nrf9160-boot
     $ make
 
