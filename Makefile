@@ -13,14 +13,25 @@ OSDIR =		mdepx
 OBJECTS =							\
 		errata.o					\
 		main.o						\
-		${OSDIR}/sys/arm/nordicsemi/nrf_uarte.o		\
-		${OSDIR}/sys/arm/nordicsemi/nrf9160_power.o	\
-		${OSDIR}/sys/arm/nordicsemi/nrf9160_spu.o	\
-		${OSDIR}/sys/arm/nordicsemi/nrf9160_timer.o	\
-		${OSDIR}/sys/arm/nordicsemi/nrf9160_uicr.o	\
+		${OSDIR}/kernel/arm/nordicsemi/nrf_uarte.o	\
+		${OSDIR}/kernel/arm/nordicsemi/nrf9160_power.o	\
+		${OSDIR}/kernel/arm/nordicsemi/nrf9160_spu.o	\
+		${OSDIR}/kernel/arm/nordicsemi/nrf9160_timer.o	\
+		${OSDIR}/kernel/arm/nordicsemi/nrf9160_uicr.o	\
 		start.o
 
-KERNEL =
+define MDX_CONFIG
+kernel {
+	module arm;
+	module callout;
+	module systm;
+
+	systm {
+		include console;
+	};
+};
+endef
+
 LIBRARIES = libc
 
 CFLAGS =-mthumb -mcpu=cortex-m4 -g -nostdlib -nostdinc	\
