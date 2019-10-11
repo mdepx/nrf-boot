@@ -10,7 +10,7 @@ export CFLAGS = -mthumb -mcpu=cortex-m4 -g -nostdlib	\
 	-Wundef -Wmissing-include-dirs -Wall -Werror
 
 all:
-	python3 -B ${OSDIR}/tools/emitter.py mdepx.conf
+	@python3 -B ${OSDIR}/tools/emitter.py mdepx.conf
 
 clean:
 	@rm -rf obj/*
