@@ -127,7 +127,7 @@ main(void)
 	uint32_t psp_ns;
 	uint32_t *vec;
 
-	printf("Hello world!\n");
+	printf("mdepx bootloader started\n");
 
 	power_init(&power_sc, BASE_POWER | PERIPH_SECURE_ACCESS);
 	errata_init();
@@ -159,6 +159,9 @@ main(void)
 	arm_scb_sysreset_secure(&scb_sc, 0);
 	arm_sau_configure(&scb_sc, 0, 1);
 	arm_fpu_non_secure(&scb_sc, 1);
+
+	if (vec[1] == 0xffffffff)
+		panic("could not find an app to jump to.");
 
 	printf("Jumping to non-secure address 0x%x\n", vec[1]);
 
