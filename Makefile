@@ -11,6 +11,7 @@ export CFLAGS = -mthumb -mcpu=cortex-m4 -g -nostdlib	\
 
 all:
 	@python3 -B ${OSDIR}/tools/emitter.py mdepx.conf
+	@${CROSS_COMPILE}objcopy -O ihex obj/${APP}.elf obj/${APP}.hex
 
 clean:
 	@rm -rf obj/*

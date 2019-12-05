@@ -29,6 +29,12 @@ Connect SWD pins as follows:
     $ cd nrf9160-boot
     $ make
 
+## Program the chip using nrfjprog
+    $ nrfjprog -f NRF91 --erasepage 0x0-0x9000
+    $ nrfjprog -f NRF91 --program obj/nrf9160-boot.hex -r
+
+## Program the chip using OpenOCD
+
 ### Build openocd
     $ sudo apt install pkg-config autotools-dev automake libtool
     $ git clone https://github.com/bukinr/openocd-nrf9160
@@ -37,7 +43,7 @@ Connect SWD pins as follows:
     $ ./configure --enable-jlink
     $ make
 
-### Program the chip
+### Invoke openocd
     $ export OPENOCD_PATH=/path/to/openocd-nrf9160
     $ sudo ${OPENOCD_PATH}/src/openocd -s ${OPENOCD_PATH}/tcl \
       -f interface/jlink.cfg -c 'transport select swd; adapter_khz 1000' \
