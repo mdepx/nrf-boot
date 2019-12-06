@@ -2,7 +2,9 @@
 
 A secure bootloader for nRF9160.
 
-Connect UART pins as follows:
+Plug a micro USB cable to nRF9160-DK.
+
+For other boards, connect UART pins as follows:
 
 | nRF9160          | UART-to-USB adapter  |
 | ----------------- | -------------------- |
