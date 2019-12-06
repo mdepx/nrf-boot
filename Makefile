@@ -1,4 +1,4 @@
-APP =		nrf9160-boot
+APP =		nrf-boot
 
 OSDIR =		mdepx
 
@@ -10,7 +10,14 @@ export CFLAGS = -mthumb -mcpu=cortex-m4 -g -nostdlib	\
 	-Wundef -Wmissing-include-dirs -Wall -Werror
 
 all:
-	@python3 -B ${OSDIR}/tools/emitter.py mdepx.conf
+	@echo Run make nrf53 or make nrf91
+
+nrf53:
+	@python3 -B ${OSDIR}/tools/emitter.py mdepx-nrf53.conf
+	@${CROSS_COMPILE}objcopy -O ihex obj/${APP}.elf obj/${APP}.hex
+
+nrf91:
+	@python3 -B ${OSDIR}/tools/emitter.py mdepx-nrf91.conf
 	@${CROSS_COMPILE}objcopy -O ihex obj/${APP}.elf obj/${APP}.hex
 
 clean:

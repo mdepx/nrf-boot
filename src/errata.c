@@ -28,6 +28,8 @@
 #include <arm/nordicsemi/nrf9160.h>
 #include "errata.h"
 
+/* nRF9160 erratas. */
+
 extern struct arm_nvic_softc nvic_sc;
 extern struct power_softc power_sc;
 
