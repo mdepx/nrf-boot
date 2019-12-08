@@ -43,6 +43,8 @@ struct arm_nvic_softc nvic_sc;
 struct spu_softc spu_sc;
 struct power_softc power_sc;
 struct arm_scb_softc scb_sc;
+struct gpio_softc gpio0_sc;
+struct reset_softc reset_sc;
 
 #define	UART_PIN_TX	20
 #define	UART_PIN_RX	22
@@ -131,9 +133,18 @@ main(void)
 
 	printf("mdepx bootloader started\n");
 
-	power_init(&power_sc, NRF_POWER | NRF_SECURE);
+	/* Configure Network MCU UART pins. */
+	gpio_init(&gpio0_sc, NRF_GPIO0 | NRF_SECURE);
+	gpio_pincfg(&gpio0_sc, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
+	gpio_pincfg(&gpio0_sc, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
 
 	spu_init(&spu_sc, NRF_SPU);
+
+	/* Release Network MCU */
+	reset_init(&reset_sc, NRF_RESET | NRF_SECURE);
+	reset_release(&reset_sc);
+
+	power_init(&power_sc, NRF_POWER | NRF_SECURE);
 
 	arm_nvic_init(&nvic_sc, BASE_SCS);
 
