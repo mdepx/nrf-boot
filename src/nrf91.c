@@ -38,11 +38,12 @@
 
 #include "errata.h"
 
-struct uarte_softc uarte_sc;
 struct arm_nvic_softc nvic_sc;
-struct spu_softc spu_sc;
-struct power_softc power_sc;
 struct arm_scb_softc scb_sc;
+
+struct nrf_uarte_softc uarte_sc;
+struct nrf_spu_softc spu_sc;
+struct nrf_power_softc power_sc;
 
 #define	UART_PIN_TX	29
 #define	UART_PIN_RX	21
@@ -56,21 +57,21 @@ void jump_ns(uint32_t addr);
 static void
 uart_putchar(int c, void *arg)
 {
-	struct uarte_softc *sc;
+	struct nrf_uarte_softc *sc;
  
 	sc = arg;
  
 	if (c == '\n')
-		uarte_putc(sc, '\r');
+		nrf_uarte_putc(sc, '\r');
 
-	uarte_putc(sc, c);
+	nrf_uarte_putc(sc, c);
 }
 
 static void
 secure_boot_configure_periph(int periph_id)
 {
 
-	spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
+	nrf_spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
 	arm_nvic_disable_intr(&nvic_sc, periph_id);
 	arm_nvic_target_ns(&nvic_sc, periph_id, 0);
 }
@@ -81,16 +82,16 @@ secure_boot_configure(void)
 	int i;
 
 	for (i = 0; i < 8; i++)
-		spu_flash_set_perm(&spu_sc, i, 1);
+		nrf_spu_flash_set_perm(&spu_sc, i, 1);
 	for (i = 8; i < 32; i++)
-		spu_flash_set_perm(&spu_sc, i, 0);
+		nrf_spu_flash_set_perm(&spu_sc, i, 0);
 
 	for (i = 0; i < 8; i++)
-		spu_sram_set_perm(&spu_sc, i, 1);
+		nrf_spu_sram_set_perm(&spu_sc, i, 1);
 	for (i = 8; i < 32; i++)
-		spu_sram_set_perm(&spu_sc, i, 0);
+		nrf_spu_sram_set_perm(&spu_sc, i, 0);
 
-	spu_gpio_set_perm(&spu_sc, 0, 0);
+	nrf_spu_gpio_set_perm(&spu_sc, 0, 0);
 
 	secure_boot_configure_periph(ID_CLOCK);
 	secure_boot_configure_periph(ID_RTC1);
@@ -112,9 +113,9 @@ int
 app_init(void)
 {
 
-	uarte_init(&uarte_sc, BASE_UARTE0 | PERIPH_SECURE_ACCESS,
+	nrf_uarte_init(&uarte_sc, BASE_UARTE0 | PERIPH_SECURE_ACCESS,
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
-	console_register(uart_putchar, (void *)&uarte_sc);
+	mdx_console_register(uart_putchar, (void *)&uarte_sc);
 
 	return (0);
 }
@@ -129,10 +130,10 @@ main(void)
 
 	printf("mdepx bootloader started\n");
 
-	power_init(&power_sc, BASE_POWER | PERIPH_SECURE_ACCESS);
-	errata_init();
+	nrf_power_init(&power_sc, BASE_POWER | PERIPH_SECURE_ACCESS);
+	nrf91_errata_init();
 
-	spu_init(&spu_sc, BASE_SPU);
+	nrf_spu_init(&spu_sc, BASE_SPU);
 	arm_nvic_init(&nvic_sc, BASE_SCS);
 
 	secure_boot_configure();

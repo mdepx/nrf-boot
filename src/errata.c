@@ -31,7 +31,7 @@
 /* nRF9160 erratas. */
 
 extern struct arm_nvic_softc nvic_sc;
-extern struct power_softc power_sc;
+extern struct nrf_power_softc power_sc;
 
 static bool
 errata_6(void)
@@ -70,11 +70,11 @@ errata_15(void)
 }
 
 void
-errata_init(void)
+nrf91_errata_init(void)
 {
 
 	if (errata_6())
-		power_reset_events(&power_sc);
+		nrf_power_reset_events(&power_sc);
 
 	if (errata_14()) {
 		/* ldo workaround */

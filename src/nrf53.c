@@ -38,13 +38,14 @@
 
 #include "errata.h"
 
-struct uarte_softc uarte_sc;
 struct arm_nvic_softc nvic_sc;
-struct spu_softc spu_sc;
-struct power_softc power_sc;
 struct arm_scb_softc scb_sc;
-struct gpio_softc gpio0_sc;
-struct reset_softc reset_sc;
+
+struct nrf_uarte_softc uarte_sc;
+struct nrf_spu_softc spu_sc;
+struct nrf_power_softc power_sc;
+struct nrf_gpio_softc gpio0_sc;
+struct nrf_reset_softc reset_sc;
 
 #define	UART_PIN_TX	20
 #define	UART_PIN_RX	22
@@ -58,21 +59,21 @@ void jump_ns(uint32_t addr);
 static void
 uart_putchar(int c, void *arg)
 {
-	struct uarte_softc *sc;
+	struct nrf_uarte_softc *sc;
  
 	sc = arg;
  
 	if (c == '\n')
-		uarte_putc(sc, '\r');
+		nrf_uarte_putc(sc, '\r');
 
-	uarte_putc(sc, c);
+	nrf_uarte_putc(sc, c);
 }
 
 static void
 secure_boot_configure_periph(int periph_id)
 {
 
-	spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
+	nrf_spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
 	arm_nvic_disable_intr(&nvic_sc, periph_id);
 	arm_nvic_target_ns(&nvic_sc, periph_id, 0);
 }
@@ -83,16 +84,16 @@ secure_boot_configure(void)
 	int i;
 
 	for (i = 0; i < 8; i++)
-		spu_flash_set_perm(&spu_sc, i, 1);
+		nrf_spu_flash_set_perm(&spu_sc, i, 1);
 	for (i = 8; i < 32; i++)
-		spu_flash_set_perm(&spu_sc, i, 0);
+		nrf_spu_flash_set_perm(&spu_sc, i, 0);
 
 	for (i = 0; i < 8; i++)
-		spu_sram_set_perm(&spu_sc, i, 1);
+		nrf_spu_sram_set_perm(&spu_sc, i, 1);
 	for (i = 8; i < 32; i++)
-		spu_sram_set_perm(&spu_sc, i, 0);
+		nrf_spu_sram_set_perm(&spu_sc, i, 0);
 
-	spu_gpio_set_perm(&spu_sc, 0, 0);
+	nrf_spu_gpio_set_perm(&spu_sc, 0, 0);
 
 	secure_boot_configure_periph(ID_CLOCK);
 	secure_boot_configure_periph(ID_RTC1);
@@ -116,9 +117,9 @@ int
 app_init(void)
 {
 
-	uarte_init(&uarte_sc, NRF_UARTE0 | NRF_SECURE,
+	nrf_uarte_init(&uarte_sc, NRF_UARTE0 | NRF_SECURE,
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
-	console_register(uart_putchar, (void *)&uarte_sc);
+	mdx_console_register(uart_putchar, (void *)&uarte_sc);
 
 	return (0);
 }
@@ -134,17 +135,17 @@ main(void)
 	printf("mdepx bootloader started\n");
 
 	/* Configure Network MCU UART pins. */
-	gpio_init(&gpio0_sc, NRF_GPIO0 | NRF_SECURE);
-	gpio_pincfg(&gpio0_sc, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
-	gpio_pincfg(&gpio0_sc, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
+	nrf_gpio_init(&gpio0_sc, NRF_GPIO0 | NRF_SECURE);
+	nrf_gpio_pincfg(&gpio0_sc, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
+	nrf_gpio_pincfg(&gpio0_sc, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
 
-	spu_init(&spu_sc, NRF_SPU);
+	nrf_spu_init(&spu_sc, NRF_SPU);
 
 	/* Release Network MCU */
-	reset_init(&reset_sc, NRF_RESET | NRF_SECURE);
-	reset_release(&reset_sc);
+	nrf_reset_init(&reset_sc, NRF_RESET | NRF_SECURE);
+	nrf_reset_release(&reset_sc);
 
-	power_init(&power_sc, NRF_POWER | NRF_SECURE);
+	nrf_power_init(&power_sc, NRF_POWER | NRF_SECURE);
 
 	arm_nvic_init(&nvic_sc, BASE_SCS);
 
@@ -170,7 +171,7 @@ main(void)
 	arm_scb_exceptions_prio_config(&scb_sc, 1);
 	arm_scb_exceptions_target_config(&scb_sc, 0);
 	arm_scb_sysreset_secure(&scb_sc, 0);
-	arm_sau_configure(&scb_sc, 0, 1);
+	arm_sau_configure(&scb_sc, 1, 1);
 	arm_fpu_non_secure(&scb_sc, 1);
 
 	if (vec[1] == 0xffffffff)

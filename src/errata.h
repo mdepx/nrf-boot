@@ -27,6 +27,6 @@
 #ifndef _ERRATA_H_
 #define	_ERRATA_H_
 
-void errata_init(void);
+void nrf91_errata_init(void);
 
 #endif	/* !_ERRATA_H_ */
