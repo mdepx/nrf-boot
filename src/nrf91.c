@@ -71,7 +71,7 @@ static void
 secure_boot_configure_periph(int periph_id)
 {
 
-	nrf_spu_periph_set_attr(&spu_sc, periph_id, 0, 0);
+	nrf_spu_periph_set_attr(&spu_sc, periph_id, false, false);
 	arm_nvic_disable_intr(&nvic_sc, periph_id);
 	arm_nvic_target_ns(&nvic_sc, periph_id, 0);
 }
@@ -82,14 +82,14 @@ secure_boot_configure(void)
 	int i;
 
 	for (i = 0; i < 8; i++)
-		nrf_spu_flash_set_perm(&spu_sc, i, 1);
+		nrf_spu_flash_set_perm(&spu_sc, i, true);
 	for (i = 8; i < 32; i++)
-		nrf_spu_flash_set_perm(&spu_sc, i, 0);
+		nrf_spu_flash_set_perm(&spu_sc, i, false);
 
 	for (i = 0; i < 8; i++)
-		nrf_spu_sram_set_perm(&spu_sc, i, 1);
+		nrf_spu_sram_set_perm(&spu_sc, i, true);
 	for (i = 8; i < 32; i++)
-		nrf_spu_sram_set_perm(&spu_sc, i, 0);
+		nrf_spu_sram_set_perm(&spu_sc, i, false);
 
 	nrf_spu_gpio_set_perm(&spu_sc, 0, 0);
 
