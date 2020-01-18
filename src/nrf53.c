@@ -113,15 +113,13 @@ secure_boot_configure(void)
 	secure_boot_configure_periph(ID_TIMER0);
 }
 
-int
-app_init(void)
+void
+board_init(void)
 {
 
 	nrf_uarte_init(&uarte_sc, NRF_UARTE0 | NRF_SECURE,
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
 	mdx_console_register(uart_putchar, (void *)&uarte_sc);
-
-	return (0);
 }
 
 int
