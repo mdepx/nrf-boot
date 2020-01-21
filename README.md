@@ -35,11 +35,15 @@ Connect SWD pins as follows:
 ### Build
     $ git clone --recursive https://github.com/machdep/nrf-boot
     $ cd nrf-boot
-    $ make nrf91
+    $ make
 
-## Program the chip using nrfjprog
+## Program the nrf91 chip using nrfjprog
     $ nrfjprog -f NRF91 --erasepage 0x0-0x9000
-    $ nrfjprog -f NRF91 --program obj/nrf-boot.hex -r
+    $ nrfjprog -f NRF91 --program obj/nrf91-boot.hex -r
+
+## Program the nrf53 chip using nrfjprog
+    $ nrfjprog -f NRF53 --erasepage 0x0-0x9000
+    $ nrfjprog -f NRF53 --program obj/nrf53-boot.hex -r
 
 ## Program the chip using OpenOCD
 
