@@ -106,9 +106,7 @@ secure_boot_configure(void)
 	secure_boot_configure_periph(ID_EGU1);
 	secure_boot_configure_periph(ID_EGU2);
 	secure_boot_configure_periph(ID_FPU);
-#if 0
-	secure_boot_configure_periph(ID_TWIM0);
-#endif
+	secure_boot_configure_periph(ID_TWIM1);
 	secure_boot_configure_periph(ID_SPIM2);
 	secure_boot_configure_periph(ID_TIMER0);
 }
