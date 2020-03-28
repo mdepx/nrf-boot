@@ -2,12 +2,14 @@ APP =		nrf-boot
 
 OSDIR =		mdepx
 
-export CFLAGS = -mthumb -mcpu=cortex-m4 -g -nostdlib	\
+export CFLAGS = -mthumb -mcpu=cortex-m33 -g -nostdlib	\
 	-nostdinc -fno-builtin-printf -ffreestanding	\
 	-Wredundant-decls -Wnested-externs		\
 	-Wstrict-prototypes -Wmissing-prototypes	\
 	-Wpointer-arith -Winline -Wcast-qual		\
 	-Wundef -Wmissing-include-dirs -Wall -Werror
+
+export AFLAGS = ${CFLAGS}
 
 all:	nrf53 nrf91
 

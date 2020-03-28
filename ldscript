@@ -1,10 +1,7 @@
 MEMORY
 {
 	flash   (rx)  : ORIGIN = 0x00000000, LENGTH = 1M
-	sram0   (rwx) : ORIGIN = 0x20000000, LENGTH = 64K /* this app */
-	sram1   (rwx) : ORIGIN = 0x20010000, LENGTH = 64K /* bsdlib */
-	sram2   (rwx) : ORIGIN = 0x20020000, LENGTH = 64K /* main app */
-	sram3   (rwx) : ORIGIN = 0x20030000, LENGTH = 64K /* malloc */
+	sram0   (rwx) : ORIGIN = 0x20000000, LENGTH = 32K
 }
 
 ENTRY(md_init)
@@ -39,8 +36,4 @@ SECTIONS
 		*(COMMON)
 		_ebss = ABSOLUTE(.);
 	} > sram0
-
-	. = ALIGN(4);
-	. = . + 0x1000;
-	stack_top = .;
 }
