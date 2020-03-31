@@ -1,3 +1,6 @@
 [submodule "mdepx"]
 	path = mdepx
 	url = https://github.com/machdep/mdepx
+[submodule "nrf_cc310"]
+	path = nrf_cc310
+	url = https://github.com/machdep/nrf_cc310
