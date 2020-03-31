@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2019-2020 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2020 Ruslan Bukin <br@bsdpad.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,28 +24,31 @@
  * SUCH DAMAGE.
  */
 
-	.cpu cortex-m33
-	.syntax unified
-	.thumb
+#include <sys/cdefs.h>
 
-	.globl jump_ns
-	.text
-	.thumb_func
-	.type jump_ns, function
+#include <arm/nordicsemi/nrf9160.h>
 
-jump_ns:
-	lsrs	r0, r0, #1
-	lsls	r0, r0, #1
-	dsb	sy
-	isb	sy
-	bxns	r0
+extern struct nrf_spu_softc spu_sc;
 
-	.globl secure_entry
-	.text
-	.thumb_func
-	.type secure_entry, function
-secure_entry:
-	push {r11, lr}
-	bl sys_entry
-	pop {r11, lr}
-	bxns lr
+void sys_entry(void);
+
+static void
+uart_secure(bool secure)
+{
+
+	if (secure)
+		nrf_spu_periph_set_attr(&spu_sc, ID_UARTE0, true, true);
+	else
+		nrf_spu_periph_set_attr(&spu_sc, ID_UARTE0, false, false);
+}
+
+void
+sys_entry(void)
+{
+
+	uart_secure(true);
+
+	printf("%s\n", __func__);
+
+	uart_secure(false);
+}

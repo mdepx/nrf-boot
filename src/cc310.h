@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2019-2020 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2020 Ruslan Bukin <br@bsdpad.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,28 +24,10 @@
  * SUCH DAMAGE.
  */
 
-	.cpu cortex-m33
-	.syntax unified
-	.thumb
+#ifndef _SRC_CC310_H_
+#define	_SRC_CC310_H_
 
-	.globl jump_ns
-	.text
-	.thumb_func
-	.type jump_ns, function
+int cc310_init(void);
+int cc310_get_random(int *out, int size);
 
-jump_ns:
-	lsrs	r0, r0, #1
-	lsls	r0, r0, #1
-	dsb	sy
-	isb	sy
-	bxns	r0
-
-	.globl secure_entry
-	.text
-	.thumb_func
-	.type secure_entry, function
-secure_entry:
-	push {r11, lr}
-	bl sys_entry
-	pop {r11, lr}
-	bxns lr
+#endif /* !_SRC_CC310_H_ */

@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2019-2020 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2020 Ruslan Bukin <br@bsdpad.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,27 @@
 	.syntax unified
 	.thumb
 
-	.globl jump_ns
+/*
+ * This function should be 32 bytes in length and
+ * located in flash at (0x8000 - 32) address.
+ */
+
+	.globl secure_gate
 	.text
 	.thumb_func
-	.type jump_ns, function
-
-jump_ns:
-	lsrs	r0, r0, #1
-	lsls	r0, r0, #1
-	dsb	sy
-	isb	sy
-	bxns	r0
-
-	.globl secure_entry
-	.text
-	.thumb_func
-	.type secure_entry, function
-secure_entry:
-	push {r11, lr}
-	bl sys_entry
-	pop {r11, lr}
-	bxns lr
+	.type secure_gate, function
+secure_gate:
+	sg				/* 4 bytes */
+	b.w	secure_entry		/* 4 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
+	nop				/* 2 bytes */
