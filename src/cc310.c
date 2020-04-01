@@ -58,10 +58,8 @@ cc310_get_random(uint8_t *out, int size)
 	/* TODO: check out pointer, so it points to non-secure area. */
 
 	err = CRYS_RND_GenerateVector(&rndState, size, (uint8_t *)out);
-	if (err)
-		return (0);
 
-	return (1);
+	return (err);
 }
 
 int
