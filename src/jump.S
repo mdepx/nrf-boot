@@ -49,3 +49,13 @@ secure_entry:
 	bl sys_entry
 	pop {r11, lr}
 	bxns lr
+
+	.globl get_random_number
+	.text
+	.thumb_func
+	.type get_random_number, function
+get_random_number:
+	push {r11, lr}
+	bl sys_get_random_number
+	pop {r11, lr}
+	bxns lr

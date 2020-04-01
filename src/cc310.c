@@ -36,6 +36,7 @@ static CRYS_RND_State_t		rndState;
 static CRYS_RND_WorkBuff_t	rndWorkBuff;
 
 extern struct arm_nvic_softc nvic_sc;
+extern struct nrf_spu_softc spu_sc;
 
 void CRYPTOCELL_IRQHandler(void);
 
@@ -47,23 +48,14 @@ cc310_intr(void *arg, struct trapframe *tf, int irq)
 }
 
 int
-cc310_get_random(int *out, int size)
+cc310_get_random(uint8_t *out, int size)
 {
 	int err;
 
-	if (size > CRYS_RND_SEED_MAX_SIZE_WORDS)
+	if (size > (CRYS_RND_SEED_MAX_SIZE_WORDS * 4))
 		return (0);
 
-	/*
-	 * Reseeding every time we want a random number is inefficient.
-	 * The idea is that the RNG is seeded initially, and then reseeded
-	 * as needed. Between this we get a pseudo random sequence (PRBS),
-	 * but this has very high quality.
-	 */
-
-	err = CRYS_RND_Reseeding(&rndState, &rndWorkBuff);
-	if (err)
-		return (0);
+	/* TODO: check out pointer, so it points to non-secure area. */
 
 	err = CRYS_RND_GenerateVector(&rndState, size, (uint8_t *)out);
 	if (err)
@@ -82,6 +74,7 @@ cc310_init(void)
 	*(volatile uint32_t *)reg = 1;
 
 	arm_nvic_setup_intr(&nvic_sc, ID_CRYPTOCELL, cc310_intr, NULL);
+	arm_nvic_set_prio(&nvic_sc, ID_CRYPTOCELL, 0);
 	arm_nvic_enable_intr(&nvic_sc, ID_CRYPTOCELL);
 
 	err = SaSi_LibInit();
@@ -96,11 +89,22 @@ cc310_init(void)
 		return (-1);
 	}
 
+	/*
+	 * Reseeding every time we want a random number is inefficient.
+	 * The idea is that the RNG is seeded initially, and then reseeded
+	 * as needed. Between this we get a pseudo random sequence (PRBS),
+	 * but this has very high quality.
+	 */
+
+	err = CRYS_RND_Reseeding(&rndState, &rndWorkBuff);
+	if (err)
+		return (0);
+
 #if 0
-	int rand;
+	uint8_t rand[48];
 	while (1) {
-		cc310_get_random(&rand, 4);
-		printf("rand %x\n", rand);
+		err = cc310_get_random(rand, 48);
+		printf("err %d, rand %x\n", err, *(uint32_t *)rand);
 	}
 #endif
 

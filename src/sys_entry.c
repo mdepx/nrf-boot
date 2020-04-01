@@ -31,24 +31,22 @@
 extern struct nrf_spu_softc spu_sc;
 
 void sys_entry(void);
+int sys_get_random_number(uint8_t *out, int size);
 
-static void
-uart_secure(bool secure)
-{
-
-	if (secure)
-		nrf_spu_periph_set_attr(&spu_sc, ID_UARTE0, true, true);
-	else
-		nrf_spu_periph_set_attr(&spu_sc, ID_UARTE0, false, false);
-}
+#include "cc310.h"
 
 void
 sys_entry(void)
 {
 
-	uart_secure(true);
+}
 
-	printf("%s\n", __func__);
+int
+sys_get_random_number(uint8_t *out, int size)
+{
+	int err;
 
-	uart_secure(false);
+	err = cc310_get_random(out, size);
+
+	return (err);
 }

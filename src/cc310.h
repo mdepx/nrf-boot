@@ -28,6 +28,6 @@
 #define	_SRC_CC310_H_
 
 int cc310_init(void);
-int cc310_get_random(int *out, int size);
+int cc310_get_random(uint8_t *out, int size);
 
 #endif /* !_SRC_CC310_H_ */

@@ -40,10 +40,8 @@
 secure_gate:
 	sg				/* 4 bytes */
 	b.w	secure_entry		/* 4 bytes */
-	nop				/* 2 bytes */
-	nop				/* 2 bytes */
-	nop				/* 2 bytes */
-	nop				/* 2 bytes */
+	sg				/* 4 bytes */
+	b.w	get_random_number	/* 4 bytes */
 	nop				/* 2 bytes */
 	nop				/* 2 bytes */
 	nop				/* 2 bytes */
