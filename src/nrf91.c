@@ -91,12 +91,12 @@ secure_boot_configure(void)
 	for (i = 8; i < 32; i++)
 		nrf_spu_flash_set_perm(&spu_sc, i, false);
 
-	/* First 32kb of sram is secure */
-	for (i = 0; i < 4; i++)
+	/* First 16kb of sram is secure */
+	for (i = 0; i < 2; i++)
 		nrf_spu_sram_set_perm(&spu_sc, i, true);
 
 	/* The rest of sram is not secure. */
-	for (i = 4; i < 32; i++)
+	for (i = 2; i < 32; i++)
 		nrf_spu_sram_set_perm(&spu_sc, i, false);
 
 	nrf_spu_gpio_set_perm(&spu_sc, 0, 0);
