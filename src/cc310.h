@@ -30,4 +30,7 @@
 int cc310_init(void);
 int cc310_get_random(uint8_t *out, int size);
 
+void board_cryptocell_setup(void);
+void CRYPTOCELL_IRQHandler(void);
+
 #endif /* !_SRC_CC310_H_ */

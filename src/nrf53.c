@@ -123,9 +123,29 @@ void
 board_init(void)
 {
 
-	nrf_uarte_init(&uarte_sc, NRF_UARTE0 | NRF_SECURE,
+	nrf_uarte_init(&uarte_sc, BASE_UARTE0 | NRF_SECURE_ACCESS,
 	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
 	mdx_console_register(uart_putchar, (void *)&uarte_sc);
+}
+
+static void
+cc310_intr(void *arg, struct trapframe *tf, int irq)
+{
+
+	CRYPTOCELL_IRQHandler();
+}
+
+void
+board_cryptocell_setup(void)
+{
+	uint32_t reg;
+
+	reg = BASE_CRYPTOCELL + CRYPTOCELL_ENABLE;
+	*(volatile uint32_t *)reg = 1;
+
+	arm_nvic_setup_intr(&nvic_sc, ID_CRYPTOCELL, cc310_intr, NULL);
+	arm_nvic_set_prio(&nvic_sc, ID_CRYPTOCELL, 0);
+	arm_nvic_enable_intr(&nvic_sc, ID_CRYPTOCELL);
 }
 
 int
@@ -141,22 +161,21 @@ main(void)
 	mdx_fl_init();
 
 	/* Configure Network MCU UART pins. */
-	nrf_gpio_init(&gpio0_sc, NRF_GPIO0 | NRF_SECURE);
+	nrf_gpio_init(&gpio0_sc, BASE_GPIO0 | NRF_SECURE_ACCESS);
 	nrf_gpio_pincfg(&gpio0_sc, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
 	nrf_gpio_pincfg(&gpio0_sc, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
 
-	nrf_spu_init(&spu_sc, NRF_SPU);
+	nrf_spu_init(&spu_sc, BASE_SPU);
 	nrf_spu_extdomain(&spu_sc, true, true);
 
 	/* Release Network MCU */
-	nrf_reset_init(&reset_sc, NRF_RESET | NRF_SECURE);
+	nrf_reset_init(&reset_sc, BASE_RESET | NRF_SECURE_ACCESS);
 	nrf_reset_release(&reset_sc);
 
-	nrf_power_init(&power_sc, NRF_POWER | NRF_SECURE);
+	nrf_power_init(&power_sc, BASE_POWER | NRF_SECURE_ACCESS);
 
 	arm_nvic_init(&nvic_sc, BASE_SCS);
 
-	cc310_init();
 	secure_boot_configure();
 
 	arm_scb_init(&scb_sc, BASE_SCS_NS);

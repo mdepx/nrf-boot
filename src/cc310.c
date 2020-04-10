@@ -27,25 +27,12 @@
 #include <sys/cdefs.h>
 
 #include <arm/arm/nvic.h>
-#include <arm/nordicsemi/nrf9160.h>
 
 #include "nrf_cc310/include/sns_silib.h"
 #include "cc310.h"
 
 static CRYS_RND_State_t		rndState;
 static CRYS_RND_WorkBuff_t	rndWorkBuff;
-
-extern struct arm_nvic_softc nvic_sc;
-extern struct nrf_spu_softc spu_sc;
-
-void CRYPTOCELL_IRQHandler(void);
-
-static void
-cc310_intr(void *arg, struct trapframe *tf, int irq)
-{
-
-	CRYPTOCELL_IRQHandler();
-}
 
 int
 cc310_get_random(uint8_t *out, int size)
@@ -65,15 +52,9 @@ cc310_get_random(uint8_t *out, int size)
 int
 cc310_init(void)
 {
-	uint32_t reg;
 	int err;
 
-	reg = BASE_CRYPTOCELL + CRYPTOCELL_ENABLE;
-	*(volatile uint32_t *)reg = 1;
-
-	arm_nvic_setup_intr(&nvic_sc, ID_CRYPTOCELL, cc310_intr, NULL);
-	arm_nvic_set_prio(&nvic_sc, ID_CRYPTOCELL, 0);
-	arm_nvic_enable_intr(&nvic_sc, ID_CRYPTOCELL);
+	board_cryptocell_setup();
 
 	err = SaSi_LibInit();
 	if (err != SA_SILIB_RET_OK) {

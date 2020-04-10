@@ -126,6 +126,26 @@ board_init(void)
 	mdx_console_register(uart_putchar, (void *)&uarte_sc);
 }
 
+static void
+cc310_intr(void *arg, struct trapframe *tf, int irq)
+{
+
+	CRYPTOCELL_IRQHandler();
+}
+
+void
+board_cryptocell_setup(void)
+{
+	uint32_t reg;
+
+	reg = BASE_CRYPTOCELL + CRYPTOCELL_ENABLE;
+	*(volatile uint32_t *)reg = 1;
+
+	arm_nvic_setup_intr(&nvic_sc, ID_CRYPTOCELL, cc310_intr, NULL);
+	arm_nvic_set_prio(&nvic_sc, ID_CRYPTOCELL, 0);
+	arm_nvic_enable_intr(&nvic_sc, ID_CRYPTOCELL);
+}
+
 int
 main(void)
 {
