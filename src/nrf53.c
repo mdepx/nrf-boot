@@ -48,10 +48,6 @@ struct nrf_power_softc power_sc;
 struct nrf_gpio_softc gpio0_sc;
 struct nrf_reset_softc reset_sc;
 
-#define	UART_PIN_TX	20
-#define	UART_PIN_RX	22
-#define	UART_BAUDRATE	115200
-
 #define	APP_ENTRY	0x40000
 
 void app_main(void);
@@ -124,7 +120,9 @@ board_init(void)
 {
 
 	nrf_uarte_init(&uarte_sc, BASE_UARTE0 | NRF_SECURE_ACCESS,
-	    UART_PIN_TX, UART_PIN_RX, UART_BAUDRATE);
+	    BOARD_UART_PIN_TX,
+	    BOARD_UART_PIN_RX,
+	    BOARD_UART_BAUDRATE);
 	mdx_console_register(uart_putchar, (void *)&uarte_sc);
 }
 
