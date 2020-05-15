@@ -30,8 +30,7 @@
 
 /* nRF9160 erratas. */
 
-extern struct arm_nvic_softc nvic_sc;
-extern struct nrf_power_softc power_sc;
+extern struct mdx_device dev_power;
 
 static bool
 errata_6(void)
@@ -74,7 +73,7 @@ nrf91_errata_init(void)
 {
 
 	if (errata_6())
-		nrf_power_reset_events(&power_sc);
+		nrf_power_reset_events(&dev_power);
 
 	if (errata_14()) {
 		/* ldo workaround */
