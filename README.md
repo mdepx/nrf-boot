@@ -24,39 +24,17 @@ Connect SWD pins as follows:
 | SWDCLK             | SWCLK                |
 | Ground             | Ground               |
 
-### Under Linux
+### Set up your environment
     $ sudo apt install gcc-arm-linux-gnueabi
     $ export CROSS_COMPILE=arm-linux-gnueabi-
 
-### Under FreeBSD
-    $ sudo pkg install arm-none-eabi-gcc arm-none-eabi-binutils
-    $ export CROSS_COMPILE=arm-none-eabi-
-
-### Build
+### Get sources and build
     $ git clone --recursive https://github.com/machdep/nrf-boot
     $ cd nrf-boot
-    $ make
+    $ make clean all
 
 ## Program the nrf91 chip using nrfjprog
-    $ nrfjprog -f NRF91 --erasepage 0x0-0x9000
-    $ nrfjprog -f NRF91 --program obj/nrf91-boot.hex -r
+    $ make flash-nrf91
 
 ## Program the nrf53 chip using nrfjprog
-    $ nrfjprog -f NRF53 --erasepage 0x0-0x9000
-    $ nrfjprog -f NRF53 --program obj/nrf53-boot.hex -r
-
-## Program the chip using OpenOCD
-
-### Build openocd
-    $ sudo apt install pkg-config autotools-dev automake libtool
-    $ git clone https://github.com/bukinr/openocd-nrf9160
-    $ cd openocd-nrf9160
-    $ ./bootstrap
-    $ ./configure --enable-jlink
-    $ make
-
-### Invoke openocd
-    $ export OPENOCD_PATH=/path/to/openocd-nrf9160
-    $ sudo ${OPENOCD_PATH}/src/openocd -s ${OPENOCD_PATH}/tcl \
-      -f interface/jlink.cfg -c 'transport select swd; adapter_khz 1000' \
-      -f target/nrf9160.cfg -c "program nrf-boot.elf 0 reset verify exit"
+    $ make flash-nrf53

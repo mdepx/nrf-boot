@@ -16,4 +16,12 @@ nrf91:
 clean:
 	@rm -rf obj/*
 
+flash-nrf53:
+	nrfjprog -f NRF53 --erasepage 0x0-0x20000
+	nrfjprog -f NRF53 --program obj/nrf53-boot.hex -r
+
+flash-nrf91:
+	nrfjprog -f NRF91 --erasepage 0x0-0x20000
+	nrfjprog -f NRF91 --program obj/nrf91-boot.hex -r
+
 include ${OSDIR}/mk/user.mk
