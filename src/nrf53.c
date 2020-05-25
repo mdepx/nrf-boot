@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2018-2019 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2018-2020 Ruslan Bukin <br@bsdpad.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,21 +45,19 @@
 
 static struct arm_nvic_softc nvic_sc;
 static struct arm_scb_softc scb_sc;
-
 static struct nrf_uarte_softc uarte_sc;
 static struct nrf_spu_softc spu_sc;
 static struct nrf_power_softc power_sc;
 static struct nrf_gpio_softc gpio0_sc;
 static struct nrf_reset_softc reset_sc;
 
-struct mdx_device dev_nvic  = { .sc =  &nvic_sc };
-struct mdx_device dev_scb   = { .sc =  &scb_sc };
-struct mdx_device dev_spu   = { .sc =  &spu_sc };
-
-struct mdx_device dev_uart   = { .sc = &uarte_sc };
-struct mdx_device dev_gpio   = { .sc = &gpio0_sc };
-struct mdx_device dev_power  = { .sc = &power_sc };
-struct mdx_device dev_reset  = { .sc = &reset_sc };
+struct mdx_device dev_nvic  = { .sc = &nvic_sc };
+struct mdx_device dev_scb   = { .sc = &scb_sc };
+struct mdx_device dev_spu   = { .sc = &spu_sc };
+struct mdx_device dev_uart  = { .sc = &uarte_sc };
+struct mdx_device dev_gpio  = { .sc = &gpio0_sc };
+struct mdx_device dev_power = { .sc = &power_sc };
+struct mdx_device dev_reset = { .sc = &reset_sc };
 
 #define	APP_ENTRY	0x40000
 
@@ -164,7 +162,7 @@ main(void)
 	nrf_gpio_pincfg(&dev_gpio, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
 	nrf_gpio_pincfg(&dev_gpio, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
 
-	nrf_spu_init(&dev_spu, BASE_SPU);
+	nrf_spu_init(&dev_spu, BASE_NVIC);
 	nrf_spu_extdomain(&dev_spu, true, true);
 
 	/* Release Network MCU */
