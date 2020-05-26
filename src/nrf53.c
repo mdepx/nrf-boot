@@ -162,7 +162,7 @@ main(void)
 	nrf_gpio_pincfg(&dev_gpio, 25, CNF_MCUSEL_NETMCU); /* UARTE TX */
 	nrf_gpio_pincfg(&dev_gpio, 26, CNF_MCUSEL_NETMCU); /* UARTE RX */
 
-	nrf_spu_init(&dev_spu, BASE_NVIC);
+	nrf_spu_init(&dev_spu, BASE_SPU);
 	nrf_spu_extdomain(&dev_spu, true, true);
 
 	/* Release Network MCU */
@@ -171,7 +171,7 @@ main(void)
 
 	nrf_power_init(&dev_power, BASE_POWER | NRF_SECURE_ACCESS);
 
-	arm_nvic_init(&dev_nvic, BASE_SCS);
+	arm_nvic_init(&dev_nvic, BASE_NVIC);
 
 	secure_boot_configure();
 
