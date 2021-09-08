@@ -155,7 +155,7 @@ main(void)
 
 	printf("mdepx bootloader started\n");
 
-	mdx_fl_init();
+	malloc_init();
 
 	/* Configure Network MCU UART pins. */
 	nrf_gpio_init(&dev_gpio, BASE_GPIO0 | NRF_SECURE_ACCESS);

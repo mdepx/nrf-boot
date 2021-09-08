@@ -153,7 +153,7 @@ main(void)
 
 	printf("mdepx bootloader started\n");
 
-	mdx_fl_init();
+	malloc_init();
 
 	nrf_power_init(&dev_power, BASE_POWER | PERIPH_SECURE_ACCESS);
 	nrf91_errata_init();
