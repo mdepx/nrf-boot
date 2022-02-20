@@ -49,13 +49,17 @@ static struct nrf_uarte_softc uarte_sc;
 static struct nrf_spu_softc spu_sc;
 static struct nrf_power_softc power_sc;
 static struct nrf_gpio_softc gpio0_sc;
+static struct nrf_nvmc_softc nvmc_sc;
+static struct nrf_uicr_softc uicr_sc;
 
 struct mdx_device dev_nvic  = { .sc = &nvic_sc };
+struct mdx_device dev_nvmc  = { .sc = &nvmc_sc };
 struct mdx_device dev_scb   = { .sc = &scb_sc };
 struct mdx_device dev_spu   = { .sc = &spu_sc };
 struct mdx_device dev_uart  = { .sc = &uarte_sc };
 struct mdx_device dev_gpio  = { .sc = &gpio0_sc };
 struct mdx_device dev_power = { .sc = &power_sc };
+struct mdx_device dev_uicr  = { .sc = &uicr_sc };
 
 #define	APP_ENTRY	0x40000
 
@@ -143,6 +147,30 @@ board_cryptocell_setup(void)
 	mdx_intc_enable(&dev_nvic, ID_CRYPTOCELL);
 }
 
+static void
+setup_uicr(void)
+{
+	uint32_t reg;
+
+	reg = nrf_uicr_read(&dev_uicr, UICR_HFXOSRC);
+	if (reg != 0x0e) {
+		if (reg != 0xffffffff)
+			printf("WARNING: you may need to erase your chip\n");
+		nrf_nvmc_write_enable(&dev_nvmc);
+		nrf_uicr_write(&dev_uicr, UICR_HFXOSRC, 0xe);
+		nrf_nvmc_read_enable(&dev_nvmc);
+	}
+
+	reg = nrf_uicr_read(&dev_uicr, UICR_HFXOCNT);
+	if (reg != 0x20) {
+		if (reg != 0xffffffff)
+			printf("WARNING: you may need to erase your chip\n");
+		nrf_nvmc_write_enable(&dev_nvmc);
+		nrf_uicr_write(&dev_uicr, UICR_HFXOCNT, 0x20);
+		nrf_nvmc_read_enable(&dev_nvmc);
+	}
+}
+
 int
 main(void)
 {
@@ -160,6 +188,10 @@ main(void)
 
 	nrf_spu_init(&dev_spu, BASE_SPU);
 	arm_nvic_init(&dev_nvic, BASE_NVIC);
+
+	nrf_nvmc_init(&dev_nvmc, BASE_NVMC | PERIPH_SECURE_ACCESS);
+	nrf_uicr_init(&dev_uicr, 0xff8000);
+	setup_uicr();
 
 	cc310_init();
 	secure_boot_configure();
