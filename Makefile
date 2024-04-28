@@ -8,10 +8,12 @@ all:	nrf53 nrf91
 nrf53:
 	@${EMITTER} -j mdepx-nrf53.conf
 	@${CROSS_COMPILE}objcopy -O ihex obj/nrf53-boot.elf obj/nrf53-boot.hex
+	@${CROSS_COMPILE}size obj/nrf53-boot.elf
 
 nrf91:
 	@${EMITTER} -j mdepx-nrf91.conf
 	@${CROSS_COMPILE}objcopy -O ihex obj/nrf91-boot.elf obj/nrf91-boot.hex
+	@${CROSS_COMPILE}size obj/nrf91-boot.elf
 
 clean:
 	@rm -rf obj/*
