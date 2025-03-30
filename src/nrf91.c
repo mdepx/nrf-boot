@@ -219,6 +219,26 @@ main(void)
 	arm_sau_configure(&dev_scb, 0, 1);
 	arm_fpu_non_secure(&dev_scb, 1);
 
+	/* Disable CTRL-AP/NVMC protection needed for development. */
+/*
+ *	UICR protection bit status		|	NVMC protection
+ * SECUREAPPROTECT APPROTECT ERASEPROTECT	| CTRL-AP	NVMC
+ *						| ERASEALL	ERASEALL
+ * 0		0		0		| Available	Available
+ * 1		X		0		| Available	Blocked
+ * X		1		0		| Available	Blocked
+ * X		X		1		| Blocked	Blocked
+ */
+
+	/* ERASEPROTECT is 0 out of reset (default). */
+
+	/* Disable SECUREAPPROTECT (s). */
+	*(uint32_t *)0x50039E00 = 0x5A;
+
+	/* Disable APPROTECT (ns). */
+	*(uint32_t *)0x40039E10 = 0x5A;
+
+	/* Now look for the app entry point. */
 	if (vec[1] == 0xffffffff)
 		panic("could not find an app to jump to.");
 
